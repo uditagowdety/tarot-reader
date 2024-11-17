@@ -1,3 +1,5 @@
+const apiKey='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';
+
 // List of Major Arcana cards with interpretations
 const tarotCards = [
     // Major Arcana
@@ -88,6 +90,7 @@ const tarotCards = [
     { name: "Queen of Pentacles", interpretation: "Nurturing, practical, providing financially, a working parent." },
     { name: "King of Pentacles", interpretation: "Wealth, business, leadership, security, discipline, abundance." }
 ];
+
 // Function to pick 3 random cards
 function pickRandomCards() {
     const selectedCards = [];
@@ -99,6 +102,7 @@ function pickRandomCards() {
         }
     }
     displayCards(selectedCards);
+    getCardInterpretation(selectedCards); // Get interpretation from Hugging Face
 }
 
 // Function to display the selected cards
@@ -120,6 +124,42 @@ function displayCards(cards) {
 
         cardsDisplay.appendChild(cardElement);
     });
+}
+
+async function getCardInterpretation(cards) {
+    const cardNames = cards.map(card => card.name).join(", ");
+    
+    // Construct the prompt for tarot card interpretation
+    const prompt = `Please provide a combined interpretation of the following tarot cards in the context of a reading: ${cardNames}.`;
+
+    // Model identifier for tinyllama-tarot-v1
+    const modelId = 'barissglc/tinyllama-tarot-v1';
+
+    const response = await fetch(`https://api-inference.huggingface.co/models/${modelId}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer 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`, // Replace with your Hugging Face API Key
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            inputs: prompt,
+            parameters: {
+                max_length: 200,  // Set a max length for the generated output
+                temperature: 0.7,  // Controls randomness (higher = more random)
+                top_p: 1.0,  // Sampling parameter
+                top_k: 50  // Limits number of tokens considered
+            }
+        })
+    });
+
+    const data = await response.json();
+
+    if (data && data[0] && data[0].generated_text) {
+        const interpretationDisplay = document.getElementById('interpretation');
+        interpretationDisplay.innerHTML = `Interpretation: ${data[0].generated_text}`;
+    } else {
+        console.log("Error: No valid generated text or error in the response");
+    }
 }
 
 // Attach event listener to the button
