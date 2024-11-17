@@ -126,39 +126,29 @@ function displayCards(cards) {
     });
 }
 
+// Function to send the selected cards to Hugging Face API and get a joint interpretation
 async function getCardInterpretation(cards) {
     const cardNames = cards.map(card => card.name).join(", ");
     
-    // Construct the prompt for tarot card interpretation
-    const prompt = `Please provide a combined interpretation of the following tarot cards in the context of a reading: ${cardNames}.`;
-
-    // Model identifier for tinyllama-tarot-v1
-    const modelId = 'barissglc/tinyllama-tarot-v1';
-
-    const response = await fetch(`https://api-inference.huggingface.co/models/${modelId}`, {
+    // Make the API request to Hugging Face
+    const response = await fetch('https://api-inference.huggingface.co/models/gpt2', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer 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`, // Replace with your Hugging Face API Key
+            'Authorization': `Bearer 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`, // Replace with your API Key
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            inputs: prompt,
-            parameters: {
-                max_length: 200,  // Set a max length for the generated output
-                temperature: 0.7,  // Controls randomness (higher = more random)
-                top_p: 1.0,  // Sampling parameter
-                top_k: 50  // Limits number of tokens considered
-            }
+            inputs: `The selected tarot cards are: ${cardNames}. Provide an interpretation of these cards together.`
         })
     });
 
     const data = await response.json();
-
+    
     if (data && data[0] && data[0].generated_text) {
         const interpretationDisplay = document.getElementById('interpretation');
         interpretationDisplay.innerHTML = `Interpretation: ${data[0].generated_text}`;
     } else {
-        console.log("Error: No valid generated text or error in the response");
+        console.log("Error in API response:", data);
     }
 }
 
