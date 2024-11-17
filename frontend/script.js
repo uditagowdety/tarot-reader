@@ -131,7 +131,7 @@ async function getCardInterpretation(cards) {
     const cardNames = cards.map(card => card.name).join(", ");
     
     // Make the API request to Hugging Face
-    const response = await fetch('https://api-inference.huggingface.co/models/gpt2', {
+    const response = await fetch('https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-2.7B', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer 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`, // Replace with your API Key
