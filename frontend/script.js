@@ -138,7 +138,7 @@ async function getCardInterpretation(cards) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            inputs: `The selected tarot cards are: ${cardNames}. Provide an interpretation of these cards together.`
+            inputs: `You are an expert in tarot reading. The selected tarot cards are: ${cardNames}. Please provide a concise interpretation of these cards.`
         })
     });
 
