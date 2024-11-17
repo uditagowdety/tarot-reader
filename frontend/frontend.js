@@ -1,5 +1,3 @@
-const apiKey='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';
-
 // List of Major Arcana cards with interpretations
 const tarotCards = [
     // Major Arcana
