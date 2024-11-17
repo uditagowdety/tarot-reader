@@ -100,7 +100,7 @@ function pickRandomCards() {
         }
     }
     displayCards(selectedCards);
-    getCardInterpretation(selectedCards); // Get interpretation from Hugging Face
+    fetchCardInterpretation(selectedCards); // Fetch interpretation from the backend
 }
 
 // Function to display the selected cards
@@ -115,7 +115,6 @@ function displayCards(cards) {
         cardElement.className = 'card';
         cardElement.textContent = card.name;
 
-        // Add click event to show interpretation
         cardElement.addEventListener('click', () => {
             interpretationDisplay.textContent = `${card.name}: ${card.interpretation}`;
         });
@@ -124,29 +123,26 @@ function displayCards(cards) {
     });
 }
 
-// Function to send the selected cards to Hugging Face API and get a joint interpretation
-async function getCardInterpretation(cards) {
+// Function to send the selected cards to the backend
+async function fetchCardInterpretation(cards) {
     const cardNames = cards.map(card => card.name).join(", ");
-    
-    // Make the API request to Hugging Face
-    const response = await fetch('https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-2.7B', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer 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`, // Replace with your API Key
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            inputs: `You are an expert in tarot reading. The selected tarot cards are: ${cardNames}. Please provide a concise interpretation of these cards.`
-        })
-    });
 
-    const data = await response.json();
-    
-    if (data && data[0] && data[0].generated_text) {
-        const interpretationDisplay = document.getElementById('interpretation');
-        interpretationDisplay.innerHTML = `Interpretation: ${data[0].generated_text}`;
-    } else {
-        console.log("Error in API response:", data);
+    try {
+        const response = await fetch('http://localhost:3000/interpret', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cards: cardNames })
+        });
+
+        const data = await response.json();
+        if (data.interpretation) {
+            const interpretationDisplay = document.getElementById('interpretation');
+            interpretationDisplay.innerHTML = `Interpretation: ${data.interpretation}`;
+        } else {
+            console.error("Error: ", data);
+        }
+    } catch (error) {
+        console.error("Error fetching interpretation:", error);
     }
 }
 

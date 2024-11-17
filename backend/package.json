@@ -1,0 +1,17 @@
+{
+  "name": "tarot-reader",
+  "version": "1.0.0",
+  "description": "This project is an AI-based tarot reading application that allows users to shuffle tarot cards, select a number of cards, and receive interpretations based on their chosen cards and an optional question about their lives. The application leverages an open-source language model (LLM) to generate insightful interpretations for users.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "node-fetch": "^3.3.2"
+  }
+}
